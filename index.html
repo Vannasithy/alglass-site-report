@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Al-Glass Site Report</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--navy:#0f1f3d;--blue:#1a3a6b;--accent:#2d6cdf;--silver:#c8d8f0;--light:#eef3fc;--lighter:#f6f9ff;--white:#fff;--ink:#0f1f3d;--muted:#6b7fa8;--border:#d0dcf0;--success:#1a8a5a;--warn:#d4780a;--danger:#c0392b;--sh:0 2px 16px rgba(15,31,61,.10);}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",sans-serif;background:linear-gradient(135deg,#e8f0ff,#f0f4fc 50%,#e4eeff);color:var(--ink);min-height:100vh}
+.topbar{background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:54px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.25)}
+.tb-brand{display:flex;align-items:center;gap:10px}
+.tb-logo{width:32px;height:32px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;letter-spacing:-.5px}
+.tb-title{font-size:13.5px;font-weight:700}.tb-sub{font-size:10px;color:var(--silver);margin-top:1px}
+.tb-acts{display:flex;gap:7px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:6px;font-family:"DM Sans",sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .14s;white-space:nowrap}
+.btn-ghost{background:rgba(255,255,255,.1);color:#fff}.btn-ghost:hover{background:rgba(255,255,255,.18)}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#2460c8;transform:translateY(-1px);box-shadow:0 4px 12px rgba(45,108,223,.3)}
+.btn-success{background:var(--success);color:#fff}.btn-success:hover{background:#156b47;transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}.btn-outline:hover{background:var(--light)}
+.btn-danger{background:var(--danger);color:#fff}.btn-sm{padding:6px 12px;font-size:11.5px}.btn-xs{padding:4px 9px;font-size:11px}
+.tab-bar{background:#fff;border-bottom:1.5px solid var(--border);display:flex;padding:0 24px;position:sticky;top:54px;z-index:90}
+.tab-btn{padding:12px 18px;font-size:12.5px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;transition:all .14s;font-family:"DM Sans",sans-serif;display:flex;align-items:center;gap:5px;margin-bottom:-1.5px}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-btn:hover:not(.active){color:var(--ink);background:var(--lighter)}
+.tab-content{display:none}.tab-content.active{display:block}
+.tbadge{background:var(--accent);color:#fff;font-size:9.5px;font-weight:700;padding:1px 7px;border-radius:20px}
+.wrap{max-width:960px;margin:0 auto;padding:22px 16px 60px}
+.card{background:#fff;border-radius:11px;box-shadow:var(--sh);overflow:hidden;margin-bottom:16px;border:1px solid rgba(208,220,240,.6)}
+.card-hd{background:linear-gradient(135deg,var(--navy),var(--blue));padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
+.card-hd-t{font-size:10.5px;font-weight:700;letter-spacing:.9px;color:var(--silver);text-transform:uppercase}
+.card-body{padding:18px}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted);text-transform:uppercase}
+.fc{padding:8px 11px;border:1.5px solid var(--border);border-radius:6px;font-family:"DM Sans",sans-serif;font-size:13px;color:var(--ink);background:var(--lighter);transition:all .13s;width:100%}
+.fc:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(45,108,223,.09)}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 14px}
+.g3 .s2{grid-column:span 2}.g3 .s3{grid-column:span 3}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl thead th{background:var(--navy);color:#fff;padding:8px 7px;font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;text-align:center;white-space:nowrap}
+.tbl thead th:first-child{text-align:left;padding-left:11px}
+.tbl tbody tr{border-bottom:1px solid var(--border)}
+.tbl tbody tr:nth-child(even){background:var(--lighter)}
+.tbl tbody tr:hover{background:var(--light)}
+.tbl td{padding:5px 4px;vertical-align:middle}
+.tbl td:first-child{padding-left:9px}
+.tbl input,.tbl select{width:100%;padding:5px 6px;border:1.5px solid transparent;border-radius:4px;background:transparent;font-family:"DM Sans",sans-serif;font-size:12px;color:var(--ink);transition:all .12s}
+.tbl input:focus,.tbl select:focus{outline:none;border-color:var(--accent);background:#fff}
+.ss{-webkit-appearance:none;text-align:center;font-size:11px;font-weight:700;padding:4px 6px;border-radius:20px;cursor:pointer;width:100%}
+.sd{background:#d4f0e4;color:#0e6b44;border-color:#a8dfc5!important}
+.sp{background:#fff3dc;color:#9a6000;border-color:#f5d78a!important}
+.sn{background:#f0f0f0;color:#666;border-color:#ccc!important}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--muted);padding:3px 5px;border-radius:4px;transition:all .12s;font-size:13px;display:flex;align-items:center}
+.del-btn:hover{background:#fde8e8;color:var(--danger)}
+.rn{text-align:center;font-family:"DM Mono",monospace;font-size:10px;color:var(--muted)}
+.issue-row{display:grid;grid-template-columns:1fr 115px 28px;gap:7px;align-items:center;background:var(--lighter);padding:8px 10px;border-radius:7px;border:1.5px solid var(--border);margin-bottom:6px}
+.sig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.sig-box{border:1.5px solid var(--border);border-radius:9px;overflow:hidden}
+.sig-hd{background:var(--light);padding:7px 12px;font-size:10px;font-weight:700;letter-spacing:.6px;color:var(--blue);text-transform:uppercase}
+.sig-wrap{height:96px;padding:7px;cursor:crosshair;position:relative}
+.sig-canvas{width:100%;height:100%;border:1.5px dashed var(--border);border-radius:5px;background:var(--lighter);display:block}
+.sig-ph{position:absolute;inset:7px;display:flex;align-items:center;justify-content:center;pointer-events:none;font-size:11px;color:var(--muted);font-style:italic}
+.sig-ni{padding:6px 11px 9px}
+.sig-ni input{width:100%;padding:5px 7px;border:1.5px solid var(--border);border-radius:5px;font-family:"DM Sans",sans-serif;font-size:12.5px;background:var(--lighter);color:var(--ink)}
+.sig-ni input:focus{outline:none;border-color:var(--accent);background:#fff}
+.sig-acts{display:flex;gap:5px;padding:0 11px 8px}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:12px}
+.photo-card{background:#fff;border:1.5px solid var(--border);border-radius:9px;overflow:hidden;transition:all .14s;box-shadow:0 1px 5px rgba(0,0,0,.05)}
+.photo-card:hover{box-shadow:var(--sh);transform:translateY(-2px)}
+.photo-prev{height:145px;background:var(--lighter);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;border-bottom:1px solid var(--border)}
+.photo-prev img{width:100%;height:100%;object-fit:cover}
+.photo-ph{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--muted);font-size:11px;font-weight:500}
+.photo-meta{padding:8px 10px;display:flex;flex-direction:column;gap:4px}
+.photo-meta input{width:100%;padding:4px 7px;border:1.5px solid var(--border);border-radius:4px;font-family:"DM Sans",sans-serif;font-size:11.5px;background:var(--lighter);color:var(--ink)}
+.photo-meta input:focus{outline:none;border-color:var(--accent);background:#fff}
+.pmr{display:flex;gap:4px}
+.photo-acts{display:flex;gap:5px;padding:0 10px 8px}
+/* Save PDF CTA box */
+.pdf-cta{background:linear-gradient(135deg,#0f1f3d,#1a3a6b);border-radius:12px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:20px;box-shadow:0 4px 24px rgba(15,31,61,.2)}
+.pdf-cta-text h3{color:#fff;font-size:16px;font-weight:700;margin-bottom:5px}
+.pdf-cta-text p{color:var(--silver);font-size:12.5px;line-height:1.6}
+.btn-pdf-main{background:linear-gradient(135deg,#2d6cdf,#4d8ff0);color:#fff;padding:14px 28px;font-size:14px;font-weight:700;border-radius:9px;border:none;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .15s;box-shadow:0 4px 16px rgba(45,108,223,.4);white-space:nowrap;display:inline-flex;align-items:center;gap:8px}
+.btn-pdf-main:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(45,108,223,.5)}
+/* History */
+.hist-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.hist-tbl thead th{background:var(--navy);color:#fff;padding:9px 12px;font-size:10px;font-weight:700;letter-spacing:.5px;text-align:left;white-space:nowrap}
+.hist-row{cursor:pointer;border-bottom:1px solid var(--border);transition:background .1s}
+.hist-row:nth-child(even){background:var(--lighter)}
+.hist-row:hover{background:var(--light)!important}
+.hist-row td{padding:9px 12px;vertical-align:middle}
+.pdf-icon{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;background:#fde8e8;border-radius:7px;color:var(--danger);font-size:13px;font-weight:700;flex-shrink:0}
+.chip{font-family:"DM Mono",monospace;font-size:10px;background:var(--light);color:var(--blue);padding:2px 7px;border-radius:4px;white-space:nowrap}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:9px;padding:12px 14px}
+.stat-val{font-size:21px;font-weight:700}.stat-lbl{font-size:10px;color:var(--muted);font-weight:500;text-transform:uppercase;margin-top:2px}
+/* Setup */
+.setup-panel{background:linear-gradient(135deg,#f0f4ff,#e8f0ff);border:1.5px solid var(--silver);border-radius:11px;padding:20px;margin-bottom:18px}
+.setup-panel h3{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:5px}
+.setup-panel p{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:11px}.sg .s2{grid-column:span 2}
+.codebox{background:var(--navy);color:#a8d0ff;font-family:"DM Mono",monospace;font-size:10px;padding:12px 14px;border-radius:7px;margin-top:9px;white-space:pre-wrap;line-height:1.65;position:relative;overflow-x:auto;max-height:440px;overflow-y:auto}
+.copy-btn{position:absolute;top:5px;right:5px;background:rgba(255,255,255,.1);color:#a8d0ff;border:none;border-radius:4px;padding:3px 8px;font-size:10px;cursor:pointer;font-family:"DM Sans",sans-serif;font-weight:600}
+.copy-btn:hover{background:rgba(255,255,255,.2)}
+/* Banners */
+.banner{padding:10px 14px;border-radius:7px;font-size:12.5px;font-weight:500;display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.bs{background:#d4f0e4;color:#0e6b44}.be{background:#fde8e8;color:#9b1b1b}
+.bi{background:var(--light);color:var(--blue)}.bw{background:#fff3dc;color:#9a6000}
+/* Modal */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .17s}
+.modal-ov.show{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:12px;padding:26px;max-width:400px;width:calc(100% - 32px);box-shadow:0 8px 40px rgba(15,31,61,.16);transform:scale(.96);transition:transform .17s}
+.modal-ov.show .modal{transform:scale(1)}
+.modal h3{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:5px}
+.modal-body{font-size:12.5px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.modal-acts{display:flex;gap:7px;justify-content:flex-end}
+/* Loader */
+.loader-ov{position:fixed;inset:0;background:rgba(255,255,255,.9);z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;opacity:0;pointer-events:none;transition:opacity .17s}
+.loader-ov.show{opacity:1;pointer-events:all}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader-txt{font-size:13px;font-weight:600;color:var(--blue);max-width:240px;text-align:center}
+input[type=file]{display:none}
+@media print{.topbar,.tab-bar,.no-print{display:none!important}.wrap{max-width:100%;padding:0}.card{box-shadow:none;border:1px solid #ccc;break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">AG</div>
+    <div><div class="tb-title">Al-Glass Site Report</div><div class="tb-sub">Aluminum &amp; Glass Installation Management</div></div>
+  </div>
+  <div class="tb-acts no-print">
+    <button class="btn btn-ghost btn-sm" id="btnNew">+ New Report</button>
+    <button class="btn btn-ghost btn-sm" id="btnHistBtn">History <span class="tbadge" id="topBadge" style="display:none">0</span></button>
+    <button class="btn btn-primary btn-sm" id="btnSetupBtn">Google Setup</button>
+  </div>
+</div>
+
+<div class="tab-bar no-print">
+  <button class="tab-btn active" data-tab="report">Installation Report</button>
+  <button class="tab-btn" data-tab="photos">Site Photos</button>
+  <button class="tab-btn" data-tab="history">Report History <span class="tbadge" id="histBadge" style="display:none">0</span></button>
+  <button class="tab-btn" data-tab="setup">Google Setup</button>
+</div>
+
+<div class="loader-ov" id="loaderOv">
+  <div class="spinner"></div>
+  <div class="loader-txt" id="loaderTxt">Processing...</div>
+</div>
+
+<div class="modal-ov" id="modalOv">
+  <div class="modal">
+    <h3 id="modalTitle">Confirm</h3>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-acts">
+      <button class="btn btn-outline btn-sm" id="modalCancel">Cancel</button>
+      <button class="btn btn-primary btn-sm" id="modalOk">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="photoInput" accept="image/*">
+
+
+<div id="tab-report" class="tab-content active"><div class="wrap">
+<div id="bannerReport"></div>
+
+<!-- SAVE TO PDF CTA -->
+<div class="pdf-cta no-print">
+  <div class="pdf-cta-text">
+    <h3>Ready to save this report?</h3>
+    <p>Click the button to generate the PDF, save it to Google Drive, and download it to your device -- all in one step.</p>
+  </div>
+  <button class="btn-pdf-main" id="btnSavePDF">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+    Save PDF to Drive
+  </button>
+</div>
+
+<div class="card">
+  <div class="card-hd"><div class="card-hd-t">Project Information</div></div>
+  <div class="card-body"><div class="g3">
+    <div class="fg s2"><label>Project Name</label><input type="text" class="fc" id="fProjectName" placeholder="e.g. The Anajak"></div>
+    <div class="fg"><label>Report No.</label><input type="text" class="fc" id="fReportNo" placeholder="SR-2025-001"></div>
+    <div class="fg s2"><label>Location / Site Address</label><input type="text" class="fc" id="fLocation" placeholder="Block, Street, District, City"></div>
+    <div class="fg"><label>Date</label><input type="date" class="fc" id="fDate"></div>
+    <div class="fg"><label>Contractor</label><input type="text" class="fc" id="fContractor" placeholder="Company name"></div>
+    <div class="fg"><label>Prepared By</label><input type="text" class="fc" id="fPreparedBy" placeholder="Site Engineer name"></div>
+    <div class="fg">
+      <label>Weather</label>
+      <select class="fc" id="fWeather">
+        <option value="">Select...</option>
+        <option value="Sunny / Clear">Sunny / Clear</option>
+        <option value="Partly Cloudy">Partly Cloudy</option>
+        <option value="Rainy">Rainy</option>
+        <option value="Stormy">Stormy</option>
+        <option value="Foggy">Foggy</option>
+        <option value="Windy">Windy</option>
+      </select>
+    </div>
+  </div></div>
+</div>
+
+<div class="card">
+  <div class="card-hd"><div class="card-hd-t">Manpower on Site</div><button class="btn btn-ghost btn-sm no-print" id="btnAddMP">+ Add Row</button></div>
+  <div style="overflow-x:auto"><table class="tbl"><thead><tr>
+    <th style="width:26px">#</th><th style="min-width:115px">Trade / Role</th><th style="min-width:115px">Name</th>
+    <th style="width:65px">Workers</th><th style="width:85px">Arrival</th><th style="width:85px">Departure</th>
+    <th style="width:105px">Status</th><th style="width:26px" class="no-print"></th>
+  </tr></thead><tbody id="mpBody"></tbody></table></div>
+</div>
+
+<div class="card">
+  <div class="card-hd"><div class="card-hd-t">Installation Scope</div><button class="btn btn-ghost btn-sm no-print" id="btnAddScope">+ Add Row</button></div>
+  <div style="overflow-x:auto"><table class="tbl"><thead><tr>
+    <th style="width:26px">#</th><th style="min-width:60px">Floor</th><th style="min-width:75px">Win/Door No.</th>
+    <th style="min-width:135px">Description</th><th style="width:80px">Frame</th><th style="width:80px">Glass</th>
+    <th style="width:80px">Silicone</th><th style="width:80px">Hardware</th>
+    <th style="width:44px">Qty</th><th style="width:55px">Unit</th><th style="min-width:95px">Remarks</th>
+    <th style="width:26px" class="no-print"></th>
+  </tr></thead><tbody id="scopeBody"></tbody></table></div>
+</div>
+
+<div class="card">
+  <div class="card-hd"><div class="card-hd-t">Issues / Observations</div><button class="btn btn-ghost btn-sm no-print" id="btnAddIssue">+ Add Issue</button></div>
+  <div class="card-body"><div id="issuesList"></div></div>
+</div>
+
+<div class="card">
+  <div class="card-hd"><div class="card-hd-t">Authorization &amp; Signatures</div></div>
+  <div class="card-body"><div class="sig-grid">
+    <div class="sig-box"><div class="sig-hd">Site Engineer</div>
+      <div class="sig-wrap" id="sw1"><canvas class="sig-canvas" id="sc1"></canvas><div class="sig-ph" id="sp1">Sign here</div></div>
+      <div class="sig-ni"><input type="text" id="sn1" placeholder="Full name"></div>
+      <div class="sig-acts no-print"><button class="btn btn-outline btn-xs" data-clr="1">Clear</button></div>
+    </div>
+    <div class="sig-box"><div class="sig-hd">QS Officer</div>
+      <div class="sig-wrap" id="sw2"><canvas class="sig-canvas" id="sc2"></canvas><div class="sig-ph" id="sp2">Sign here</div></div>
+      <div class="sig-ni"><input type="text" id="sn2" placeholder="Full name"></div>
+      <div class="sig-acts no-print"><button class="btn btn-outline btn-xs" data-clr="2">Clear</button></div>
+    </div>
+    <div class="sig-box"><div class="sig-hd">Project Manager</div>
+      <div class="sig-wrap" id="sw3"><canvas class="sig-canvas" id="sc3"></canvas><div class="sig-ph" id="sp3">Sign here</div></div>
+      <div class="sig-ni"><input type="text" id="sn3" placeholder="Full name"></div>
+      <div class="sig-acts no-print"><button class="btn btn-outline btn-xs" data-clr="3">Clear</button></div>
+    </div>
+  </div></div>
+</div>
+
+<div style="text-align:center;padding:8px 0 24px" class="no-print">
+  <button class="btn-pdf-main" id="btnSavePDF2">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+    Save PDF to Drive &amp; Download
+  </button>
+</div>
+
+</div></div>
+
+
+<div id="tab-photos" class="tab-content"><div class="wrap">
+<div id="bannerPhotos"></div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+  <div>
+    <h2 style="font-size:14px;font-weight:700;color:var(--navy)">Site Photos</h2>
+    <p style="font-size:11px;color:var(--muted);margin-top:3px">Photos are included in the PDF report. Add captions and location info.</p>
+  </div>
+  <button class="btn btn-outline btn-sm no-print" id="btnAddPhoto">+ Add Photo</button>
+</div>
+<div class="photo-grid" id="photoGrid"></div>
+</div></div>
+
+
+<div id="tab-history" class="tab-content"><div class="wrap">
+<div id="bannerHistory"></div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+  <div>
+    <h2 style="font-size:14px;font-weight:700;color:var(--navy)">Report History</h2>
+    <p style="font-size:11px;color:var(--muted);margin-top:3px">PDF reports saved to Google Drive. Click any row to open the PDF.</p>
+  </div>
+  <button class="btn btn-outline btn-sm no-print" id="btnRefreshHist">Refresh</button>
+</div>
+
+<div class="stat-grid" id="histStats">
+  <div class="stat-card"><div class="stat-val" id="statTotal" style="color:var(--accent)">--</div><div class="stat-lbl">Total Reports</div></div>
+  <div class="stat-card"><div class="stat-val" id="statMonth" style="color:var(--success)">--</div><div class="stat-lbl">This Month</div></div>
+  <div class="stat-card"><div class="stat-val" id="statSize" style="color:var(--warn)">--</div><div class="stat-lbl">Total Size</div></div>
+</div>
+
+<div class="card" style="margin-bottom:13px"><div class="card-body" style="padding:11px 15px">
+  <div style="display:grid;grid-template-columns:1fr 140px;gap:9px;align-items:end">
+    <div class="fg" style="margin:0"><label>Search by filename</label><input type="text" class="fc" id="histSearch" placeholder="Project name, report no., date..."></div>
+    <div class="fg" style="margin:0"><label>Filter Month</label><input type="month" class="fc" id="histMonth"></div>
+  </div>
+</div></div>
+
+<div class="card">
+  <div class="card-hd">
+    <div class="card-hd-t">PDF Reports on Google Drive <span id="histCount" style="background:rgba(255,255,255,.15);padding:1px 7px;border-radius:20px;font-size:9px;margin-left:3px">0</span></div>
+  </div>
+  <div style="overflow-x:auto">
+    <table class="hist-tbl"><thead><tr>
+      <th style="width:44px"></th>
+      <th>Filename</th>
+      <th style="width:140px">Saved At</th>
+      <th style="width:80px">Size</th>
+      <th style="width:100px;text-align:center">Action</th>
+    </tr></thead>
+    <tbody id="histBody">
+      <tr><td colspan="5" style="padding:36px;text-align:center;color:var(--muted)">Click Refresh to load PDF reports from Google Drive</td></tr>
+    </tbody></table>
+  </div>
+</div>
+</div></div>
+
+
+<div id="tab-setup" class="tab-content"><div class="wrap">
+<div id="bannerSetup"></div>
+<div class="setup-panel">
+  <h3>Google Drive Setup</h3>
+  <p>Connect to Google Drive so PDF reports are automatically saved when you click "Save PDF to Drive". The History tab will show all saved PDFs.<br>
+  <strong style="color:var(--navy)">Before testing:</strong> Make sure your Apps Script is deployed with <strong>Execute as: Me</strong> and <strong>Who has access: Anyone</strong>, and that you created a <strong>New Version</strong> after pasting the script.</p>
+  <div class="sg">
+    <div class="fg s2"><label>Apps Script Web App URL</label><input type="url" class="fc" id="cfgUrl" placeholder="https://script.google.com/macros/s/.../exec" value="https://script.google.com/macros/s/AKfycby8Y8_tsoUtOp0Zq5eJ6Awy2ySTLI5du0TTnYJcadGM8F9O_zgJTs_m9X8TvO1Q-dmU/exec"></div>
+    <div class="fg"><label>Drive Folder ID (for PDF reports)</label><input type="text" class="fc" id="cfgFolderId" placeholder="1a2B3cD4eF5gH6iJ7k..." value="1kh1SWOWaEbxnrOB5WFoaUIXjA5ZEqvzC"></div>
+    <div class="fg"><label>Telegram Bot Token</label><input type="text" class="fc" id="cfgTgToken" placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"></div>
+    <div class="fg"><label>Telegram Chat ID</label><input type="text" class="fc" id="cfgTgChatId" placeholder="-1001234567890 or your user ID"></div>
+    <div class="fg s2" style="flex-direction:row;align-items:center;gap:8px;margin-top:2px">
+      <button class="btn btn-primary" id="btnSaveCfg">Save All</button>
+      <button class="btn btn-outline" id="btnTestConn">Test Connection</button>
+      <button class="btn btn-outline" id="btnTestTg" style="margin-left:4px">Test Telegram</button>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-hd"><div class="card-hd-t">How to get your Drive Folder ID</div></div>
+  <div class="card-body">
+    <p style="font-size:12.5px;color:var(--muted);line-height:1.75">
+      1. Open <a href="https://drive.google.com" target="_blank" style="color:var(--accent)">Google Drive</a> and create a folder called <strong>Site Reports</strong> (or any name).<br>
+      2. Open the folder. Copy the ID from the URL:<br>
+      &nbsp;&nbsp;&nbsp;<code style="background:var(--light);padding:2px 7px;border-radius:4px;font-size:11.5px">drive.google.com/drive/folders/<strong>THIS_IS_YOUR_FOLDER_ID</strong></code><br>
+      3. Paste the Folder ID above.
+    </p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-hd"><div class="card-hd-t">Apps Script Code</div></div>
+  <div class="card-body">
+    <p style="font-size:12px;color:var(--muted);margin-bottom:13px;line-height:1.7">
+      <strong style="color:var(--navy)">Step 1</strong> - Open <a href="https://script.google.com" target="_blank" style="color:var(--accent)">script.google.com</a>, create a New Project, paste the script below.<br>
+      <strong style="color:var(--navy)">Step 2</strong> - Replace YOUR_FOLDER_ID with your folder ID.<br>
+      <strong style="color:var(--navy)">Step 3</strong> - Deploy as Web App: Execute as <strong>Me</strong>, Access <strong>Anyone</strong>.<br>
+      <strong style="color:var(--navy)">Step 4</strong> - Copy the Web App URL, paste above, click Save then Test Connection.<br>
+      <strong style="color:var(--danger)">Note:</strong> After any script edits, always create a New Version when redeploying.
+    </p>
+    <div style="position:relative">
+      <button class="copy-btn" id="btnCopyScript">Copy</button>
+      <pre class="codebox" id="scriptBox"></pre>
+    </div>
+  </div>
+</div>
+</div></div>
+
+<script>
+
+// ============================================================
+// STATE
+// ============================================================
+var gId="",mpRows=[],scRows=[],isRows=[],phSlots=[],phIdx=null;
+var gCfg={url:"https://script.google.com/macros/s/AKfycby8Y8_tsoUtOp0Zq5eJ6Awy2ySTLI5du0TTnYJcadGM8F9O_zgJTs_m9X8TvO1Q-dmU/exec",folderId:"1kh1SWOWaEbxnrOB5WFoaUIXjA5ZEqvzC",tgToken:"",tgChatId:""};
+var sigHas={1:false,2:false,3:false},drawing=false,drawSig=0;
+var allFiles=[],filtFiles=[],modalCb=null,bTimers={};
+
+var MP_TRADES=["Glazier","Aluminum Fabricator","Frame Installer","Sealant Applicator","Hardware Installer","Helper","Supervisor","Foreman"];
+var MP_STATUS=["Present","Late Arrival","Half Day","Absent","Overtime"];
+var SC_UNITS=["m2","pcs","set","lot","m","nos"];
+var IS_TYPES=["Defect","Delay","Safety","Quality","Design Change","Material","Access","Other"];
+var ST_OPTS=[{v:"Done",c:"sd"},{v:"Pending",c:"sp"},{v:"N/A",c:"sn"}];
+
+function mkId(){return "SR-"+Date.now().toString(36).toUpperCase()+"-"+Math.random().toString(36).substr(2,4).toUpperCase();}
+function stC(s){return s==="Present"||s==="Overtime"?"sd":s==="Absent"?"sn":"sp";}
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/'/g,"&#39;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function showBanner(tab,msg,type){
+  var id="banner"+tab.charAt(0).toUpperCase()+tab.slice(1);
+  var el=document.getElementById(id);if(!el)return;
+  el.className="banner b"+type.charAt(0);el.textContent=msg;el.style.display="flex";
+  clearTimeout(bTimers[tab]);bTimers[tab]=setTimeout(function(){el.style.display="none";},6000);
+}
+function showLoader(t){document.getElementById("loaderTxt").textContent=t||"Processing...";document.getElementById("loaderOv").classList.add("show");}
+function hideLoader(){document.getElementById("loaderOv").classList.remove("show");}
+function showModal(title,body,cb){
+  document.getElementById("modalTitle").textContent=title;
+  var bd=document.getElementById("modalBody");
+  if(typeof body==="string"){bd.textContent=body;}else{bd.innerHTML="";bd.appendChild(body);}
+  modalCb=cb;document.getElementById("modalOk").style.display=cb?"":"none";
+  document.getElementById("modalOv").classList.add("show");
+}
+function closeModal(){document.getElementById("modalOv").classList.remove("show");}
+function switchTab(name){
+  document.querySelectorAll(".tab-content").forEach(function(t){t.classList.remove("active");});
+  document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.remove("active");});
+  var el=document.getElementById("tab-"+name);if(el)el.classList.add("active");
+  document.querySelectorAll(".tab-btn").forEach(function(b){if(b.getAttribute("data-tab")===name)b.classList.add("active");});
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener("DOMContentLoaded",function(){
+  gId=mkId();
+  loadCfg();
+  document.getElementById("fDate").value=new Date().toISOString().split("T")[0];
+  for(var i=0;i<5;i++)mpRows.push({trade:"",name:"",count:1,arrival:"",departure:"",status:"Present"});
+  for(var i=0;i<5;i++)scRows.push({floor:"",winNo:"",desc:"",frame:"Pending",glass:"Pending",silicone:"Pending",hardware:"Pending",qty:"",unit:"m2",remarks:""});
+  for(var i=0;i<2;i++)isRows.push({desc:"",type:"Defect"});
+  for(var i=0;i<4;i++)phSlots.push({file:null,preview:null,caption:"",floor:"",winNo:""});
+  renderMP();renderScope();renderIssues();renderPhotos();initSigs();
+  populateScriptBox();
+
+  // Tabs
+  document.querySelectorAll(".tab-btn").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      var t=btn.getAttribute("data-tab");
+      switchTab(t);
+      if(t==="history")loadHistory();
+    });
+  });
+
+  // Topbar
+  document.getElementById("btnNew").addEventListener("click",newReport);
+  document.getElementById("btnHistBtn").addEventListener("click",function(){switchTab("history");loadHistory();});
+  document.getElementById("btnSetupBtn").addEventListener("click",function(){switchTab("setup");});
+
+  // Save PDF buttons (both top and bottom)
+  document.getElementById("btnSavePDF").addEventListener("click",savePDFtoDrive);
+  document.getElementById("btnSavePDF2").addEventListener("click",savePDFtoDrive);
+
+  // Report
+  document.getElementById("btnAddMP").addEventListener("click",function(){mpRows.push({trade:"",name:"",count:1,arrival:"",departure:"",status:"Present"});renderMP();});
+  document.getElementById("btnAddScope").addEventListener("click",function(){scRows.push({floor:"",winNo:"",desc:"",frame:"Pending",glass:"Pending",silicone:"Pending",hardware:"Pending",qty:"",unit:"m2",remarks:""});renderScope();});
+  document.getElementById("btnAddIssue").addEventListener("click",function(){isRows.push({desc:"",type:"Defect"});renderIssues();});
+  document.querySelectorAll("[data-clr]").forEach(function(b){b.addEventListener("click",function(){clearSig(parseInt(b.getAttribute("data-clr")));});});
+
+  // Photos
+  document.getElementById("btnAddPhoto").addEventListener("click",function(){phSlots.push({file:null,preview:null,caption:"",floor:"",winNo:""});renderPhotos();});
+  document.getElementById("photoInput").addEventListener("change",handlePhotoFile);
+
+  // History
+  document.getElementById("btnRefreshHist").addEventListener("click",loadHistory);
+  document.getElementById("histSearch").addEventListener("input",filterHistory);
+  document.getElementById("histMonth").addEventListener("change",filterHistory);
+
+  // Setup
+  document.getElementById("btnSaveCfg").addEventListener("click",saveCfg);
+  document.getElementById("btnTestTg").addEventListener("click",testTelegram);
+  document.getElementById("btnTestConn").addEventListener("click",testConn);
+  document.getElementById("btnCopyScript").addEventListener("click",copyScript);
+
+  // Modal
+  document.getElementById("modalCancel").addEventListener("click",closeModal);
+  document.getElementById("modalOk").addEventListener("click",function(){if(modalCb)modalCb();closeModal();});
+  document.getElementById("modalOv").addEventListener("click",function(e){if(e.target===this)closeModal();});
+});
+
+// ============================================================
+// MANPOWER
+// ============================================================
+function renderMP(){
+  var tb=document.getElementById("mpBody"),html="";
+  mpRows.forEach(function(r,i){
+    var trO=MP_TRADES.map(function(t){return "<option value=\""+t+"\""+(r.trade===t?" selected":"")+">"+t+"</option>";}).join("")+"<option>Other</option>";
+    var stO=MP_STATUS.map(function(s){return "<option value=\""+s+"\""+(r.status===s?" selected":"")+">"+s+"</option>";}).join("");
+    html+="<tr>"+
+      "<td class=\"rn\">"+(i+1)+"</td>"+
+      "<td><select onchange=\"mpRows["+i+"].trade=this.value\"><option value=\"\">Select...</option>"+trO+"</select></td>"+
+      "<td><input type=\"text\" value=\""+esc(r.name)+"\" placeholder=\"Name\" onchange=\"mpRows["+i+"].name=this.value\"></td>"+
+      "<td><input type=\"number\" value=\""+r.count+"\" min=\"1\" max=\"99\" style=\"text-align:center\" onchange=\"mpRows["+i+"].count=this.value\"></td>"+
+      "<td><input type=\"time\" value=\""+r.arrival+"\" onchange=\"mpRows["+i+"].arrival=this.value\"></td>"+
+      "<td><input type=\"time\" value=\""+r.departure+"\" onchange=\"mpRows["+i+"].departure=this.value\"></td>"+
+      "<td><select class=\"ss "+stC(r.status)+"\" onchange=\"mpRows["+i+"].status=this.value;this.className='ss '+stC(this.value)\">"+stO+"</select></td>"+
+      "<td class=\"no-print\"><button class=\"del-btn\" onclick=\"mpRows.splice("+i+",1);renderMP()\">x</button></td>"+
+      "</tr>";
+  });
+  tb.innerHTML=html;
+}
+
+// ============================================================
+// SCOPE
+// ============================================================
+function renderScope(){
+  var tb=document.getElementById("scopeBody"),html="";
+  scRows.forEach(function(r,i){
+    var uO=SC_UNITS.map(function(u){return "<option"+(r.unit===u?" selected":"")+">"+u+"</option>";}).join("");
+    function stCell(f,v){
+      var cls=v==="Done"?"sd":v==="N/A"?"sn":"sp";
+      var o=ST_OPTS.map(function(x){return "<option value=\""+x.v+"\""+(v===x.v?" selected":"")+">"+x.v+"</option>";}).join("");
+      return "<td style=\"text-align:center\"><select class=\"ss "+cls+"\" onchange=\"scRows["+i+"]."+f+"=this.value;this.className='ss '+(this.value==='Done'?'sd':this.value==='N/A'?'sn':'sp')\">"+o+"</select></td>";
+    }
+    html+="<tr>"+
+      "<td class=\"rn\">"+(i+1)+"</td>"+
+      "<td><input type=\"text\" value=\""+esc(r.floor)+"\" placeholder=\"GF/L1\" onchange=\"scRows["+i+"].floor=this.value\"></td>"+
+      "<td><input type=\"text\" value=\""+esc(r.winNo)+"\" placeholder=\"W-01\" onchange=\"scRows["+i+"].winNo=this.value\"></td>"+
+      "<td><input type=\"text\" value=\""+esc(r.desc)+"\" placeholder=\"Description\" onchange=\"scRows["+i+"].desc=this.value\"></td>"+
+      stCell("frame",r.frame)+stCell("glass",r.glass)+stCell("silicone",r.silicone)+stCell("hardware",r.hardware)+
+      "<td><input type=\"number\" value=\""+r.qty+"\" min=\"0\" style=\"text-align:center;width:40px\" onchange=\"scRows["+i+"].qty=this.value\"></td>"+
+      "<td><select onchange=\"scRows["+i+"].unit=this.value\">"+uO+"</select></td>"+
+      "<td><input type=\"text\" value=\""+esc(r.remarks)+"\" placeholder=\"Notes\" onchange=\"scRows["+i+"].remarks=this.value\"></td>"+
+      "<td class=\"no-print\"><button class=\"del-btn\" onclick=\"scRows.splice("+i+",1);renderScope()\">x</button></td>"+
+      "</tr>";
+  });
+  tb.innerHTML=html;
+}
+
+// ============================================================
+// ISSUES
+// ============================================================
+function renderIssues(){
+  var el=document.getElementById("issuesList");
+  if(!isRows.length){el.innerHTML="<p style=\"color:var(--muted);font-size:12px;text-align:center;padding:10px\">No issues recorded.</p>";return;}
+  var html="";
+  isRows.forEach(function(r,i){
+    var tO=IS_TYPES.map(function(t){return "<option"+(r.type===t?" selected":"")+">"+t+"</option>";}).join("");
+    html+="<div class=\"issue-row\">"+
+      "<input type=\"text\" class=\"fc\" value=\""+esc(r.desc)+"\" placeholder=\"Describe issue...\" onchange=\"isRows["+i+"].desc=this.value\" style=\"font-size:12.5px\">"+
+      "<select class=\"fc\" onchange=\"isRows["+i+"].type=this.value\" style=\"font-size:12.5px\">"+tO+"</select>"+
+      "<button class=\"del-btn\" onclick=\"isRows.splice("+i+",1);renderIssues()\">x</button>"+
+      "</div>";
+  });
+  el.innerHTML=html;
+}
+
+// ============================================================
+// SIGNATURES
+// ============================================================
+function initSigs(){
+  [1,2,3].forEach(function(id){
+    var c=document.getElementById("sc"+id),w=document.getElementById("sw"+id);
+    c.width=w.offsetWidth-14;c.height=w.offsetHeight-14;
+    c.addEventListener("mousedown",function(e){sigS(e,id,false);});
+    c.addEventListener("mousemove",function(e){sigM(e,id,false);});
+    c.addEventListener("mouseup",function(){drawing=false;});
+    c.addEventListener("mouseleave",function(){drawing=false;});
+    c.addEventListener("touchstart",function(e){e.preventDefault();sigS(e,id,true);},{passive:false});
+    c.addEventListener("touchmove",function(e){e.preventDefault();sigM(e,id,true);},{passive:false});
+    c.addEventListener("touchend",function(){drawing=false;});
+  });
+}
+function sigP(e,id,touch){var c=document.getElementById("sc"+id),r=c.getBoundingClientRect(),s=touch?e.touches[0]:e;return{x:s.clientX-r.left,y:s.clientY-r.top};}
+function sigS(e,id,touch){drawing=true;drawSig=id;var p=sigP(e,id,touch),c=document.getElementById("sc"+id),ctx=c.getContext("2d");ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.strokeStyle="#0f1f3d";ctx.lineWidth=1.8;ctx.lineCap="round";document.getElementById("sp"+id).style.display="none";sigHas[id]=true;}
+function sigM(e,id,touch){if(!drawing||drawSig!==id)return;var p=sigP(e,id,touch),ctx=document.getElementById("sc"+id).getContext("2d");ctx.lineTo(p.x,p.y);ctx.stroke();}
+function clearSig(id){var c=document.getElementById("sc"+id);c.getContext("2d").clearRect(0,0,c.width,c.height);document.getElementById("sp"+id).style.display="flex";sigHas[id]=false;}
+
+// ============================================================
+// PHOTOS
+// ============================================================
+function renderPhotos(){
+  var g=document.getElementById("photoGrid"),html="";
+  phSlots.forEach(function(s,i){
+    var prev=s.preview
+      ?"<img src=\""+s.preview+"\" style=\"width:100%;height:100%;object-fit:cover\">"
+      :"<div class=\"photo-ph\"><svg width=\"30\" height=\"30\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" style=\"opacity:.3\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><circle cx=\"8.5\" cy=\"8.5\" r=\"1.5\"/><polyline points=\"21 15 16 10 5 21\"/></svg><span>Click to add photo</span></div>";
+    html+="<div class=\"photo-card\">"+
+      "<div class=\"photo-prev\" onclick=\"pickPhoto("+i+")\">"+prev+"</div>"+
+      "<div class=\"photo-meta\">"+
+        "<input type=\"text\" placeholder=\"Caption / Description\" value=\""+esc(s.caption)+"\" onchange=\"phSlots["+i+"].caption=this.value\">"+
+        "<div class=\"pmr\">"+
+          "<input type=\"text\" placeholder=\"Floor\" value=\""+esc(s.floor)+"\" style=\"flex:1\" onchange=\"phSlots["+i+"].floor=this.value\">"+
+          "<input type=\"text\" placeholder=\"Win/Door\" value=\""+esc(s.winNo)+"\" style=\"flex:1\" onchange=\"phSlots["+i+"].winNo=this.value\">"+
+        "</div>"+
+      "</div>"+
+      "<div class=\"photo-acts no-print\">"+
+        "<button class=\"btn btn-danger btn-xs\" style=\"margin-left:auto\" onclick=\"phSlots.splice("+i+",1);renderPhotos()\">Remove</button>"+
+      "</div></div>";
+  });
+  g.innerHTML=html;
+}
+function pickPhoto(i){phIdx=i;document.getElementById("photoInput").click();}
+function handlePhotoFile(e){
+  var f=e.target.files[0];if(!f||phIdx===null)return;
+  var rd=new FileReader();
+  rd.onload=function(ev){
+    // Compress via canvas before storing
+    var img=new Image();
+    img.onload=function(){
+      var MAX=1024; // max dimension in px
+      var scale=Math.min(1,MAX/Math.max(img.width,img.height));
+      var w=Math.round(img.width*scale),h=Math.round(img.height*scale);
+      var canvas=document.createElement("canvas");
+      canvas.width=w;canvas.height=h;
+      canvas.getContext("2d").drawImage(img,0,0,w,h);
+      var compressed=canvas.toDataURL("image/jpeg",0.72); // 72% quality JPEG
+      var origKB=Math.round(ev.target.result.length*0.75/1024);
+      var compKB=Math.round(compressed.length*0.75/1024);
+      console.log("Photo compressed: "+origKB+"KB -> "+compKB+"KB ("+Math.round(compKB/origKB*100)+"%)");
+      phSlots[phIdx].file=f;
+      phSlots[phIdx].preview=compressed;
+      phSlots[phIdx].sizeKB=compKB;
+      renderPhotos();
+    };
+    img.src=ev.target.result;
+  };
+  rd.readAsDataURL(f);e.target.value="";
+}
+
+// ============================================================
+// NEW REPORT
+// ============================================================
+function newReport(){
+  showModal("New Report","This will clear all current data. Continue?",function(){
+    gId=mkId();
+    ["fProjectName","fLocation","fReportNo","fContractor","fPreparedBy"].forEach(function(id){document.getElementById(id).value="";});
+    document.getElementById("fWeather").value="";
+    document.getElementById("fDate").value=new Date().toISOString().split("T")[0];
+    mpRows=[];scRows=[];isRows=[];phSlots=[];
+    for(var i=0;i<5;i++)mpRows.push({trade:"",name:"",count:1,arrival:"",departure:"",status:"Present"});
+    for(var i=0;i<5;i++)scRows.push({floor:"",winNo:"",desc:"",frame:"Pending",glass:"Pending",silicone:"Pending",hardware:"Pending",qty:"",unit:"m2",remarks:""});
+    for(var i=0;i<2;i++)isRows.push({desc:"",type:"Defect"});
+    for(var i=0;i<4;i++)phSlots.push({file:null,preview:null,caption:"",floor:"",winNo:""});
+    renderMP();renderScope();renderIssues();renderPhotos();[1,2,3].forEach(clearSig);
+  });
+}
+
+// ============================================================
+// GOOGLE API  (JSONP for GET, no-cors for POST)
+// ============================================================
+function jsonpGet(url,timeout){
+  return new Promise(function(resolve,reject){
+    var cb="_cb"+Date.now()+Math.floor(Math.random()*9999),tag=document.createElement("script"),done=false;
+    var timer=setTimeout(function(){if(!done){done=true;cleanup();reject(new Error("Timed out. Check URL and deployment settings."));}},timeout||8000);
+    window[cb]=function(d){if(!done){done=true;cleanup();resolve(d);}};
+    function cleanup(){clearTimeout(timer);delete window[cb];if(tag.parentNode)tag.parentNode.removeChild(tag);}
+    tag.src=url+(url.indexOf("?")>=0?"&":"?")+"callback="+cb;
+    tag.onerror=function(){if(!done){done=true;cleanup();reject(new Error("Script load failed. Check deployment access."));}};
+    document.head.appendChild(tag);
+  });
+}
+function nocorsPost(url,payload){
+  return fetch(url,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)});
+}
+
+function saveCfg(){
+  gCfg.url=document.getElementById("cfgUrl").value.trim();
+  gCfg.folderId=document.getElementById("cfgFolderId").value.trim();
+  gCfg.tgToken=document.getElementById("cfgTgToken").value.trim();
+  gCfg.tgChatId=document.getElementById("cfgTgChatId").value.trim();
+  try{localStorage.setItem("alglass_cfg2",JSON.stringify(gCfg));}catch(e){}
+  showBanner("setup","Configuration saved!","s");
+}
+function loadCfg(){
+  try{
+    var s=localStorage.getItem("alglass_cfg2");
+    if(s){var saved=JSON.parse(s);if(saved.url)gCfg.url=saved.url;if(saved.folderId)gCfg.folderId=saved.folderId;if(saved.tgToken)gCfg.tgToken=saved.tgToken;if(saved.tgChatId)gCfg.tgChatId=saved.tgChatId;}
+  }catch(e){}
+  document.getElementById("cfgUrl").value=gCfg.url;
+  document.getElementById("cfgFolderId").value=gCfg.folderId;
+  document.getElementById("cfgTgToken").value=gCfg.tgToken||"";
+  document.getElementById("cfgTgChatId").value=gCfg.tgChatId||"";
+}
+async function testConn(){
+  if(!gCfg.url){showBanner("setup","Enter the Apps Script URL first.","w");return;}
+  if(gCfg.url.indexOf("script.google.com/macros/s/")<0){
+    showBanner("setup","URL looks wrong. Must be: https://script.google.com/macros/s/.../exec","e");
+    return;
+  }
+  showLoader("Testing connection...");
+  // Try JSONP first
+  try{
+    var d=await jsonpGet(gCfg.url+"?action=ping",6000);
+    if(d.status==="ok"){showBanner("setup","Connection successful! Drive integration is ready.","s");hideLoader();return;}
+    showBanner("setup","Unexpected response: "+JSON.stringify(d),"w");hideLoader();return;
+  }catch(jsonpErr){}
+  // Fallback: plain fetch for diagnosis
+  try{
+    var res=await fetch(gCfg.url+"?action=ping",{method:"GET"});
+    var text=await res.text();
+    if(text.indexOf("ok")>=0){
+      showBanner("setup","Script reachable but JSONP not working. Redeploy with a NEW VERSION after pasting the script.","w");
+    }else if(res.status===200){
+      showBanner("setup","Script reached but response is wrong. Check the script code matches the Setup tab.","w");
+    }else{
+      showBanner("setup","HTTP "+res.status+" -- check Deploy settings: Execute as Me, Access Anyone.","e");
+    }
+  }catch(fetchErr){
+    showBanner("setup","Cannot reach script. Check: (1) URL is correct Web App URL, (2) Access = Anyone, (3) You deployed a New Version after pasting the code, (4) Execute as = Me.","e");
+  }
+  hideLoader();
+}
+
+async function sendTelegram(msg){
+  // Sends a message directly to Telegram Bot API (no server needed)
+  if(!gCfg.tgToken||!gCfg.tgChatId) return;
+  try{
+    await fetch("https://api.telegram.org/bot"+gCfg.tgToken+"/sendMessage",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({chat_id:gCfg.tgChatId,text:msg,parse_mode:"HTML"})
+    });
+  }catch(e){console.warn("Telegram notify failed:",e.message);}
+}
+
+async function testTelegram(){
+  if(!gCfg.tgToken||!gCfg.tgChatId){showBanner("setup","Enter Telegram Bot Token and Chat ID first.","w");return;}
+  showLoader("Sending test message...");
+  try{
+    var res=await fetch("https://api.telegram.org/bot"+gCfg.tgToken+"/sendMessage",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({chat_id:gCfg.tgChatId,text:"<b>Al-Glass Site Report</b>\n\nTest notification from your site report app. Connection is working!",parse_mode:"HTML"})
+    });
+    var data=await res.json();
+    if(data.ok){showBanner("setup","Telegram test sent successfully! Check your Telegram.","s");}
+    else{showBanner("setup","Telegram error: "+data.description,"e");}
+  }catch(e){showBanner("setup","Telegram failed: "+e.message,"e");}
+  hideLoader();
+}
+
+// ============================================================
+// PDF GENERATION
+// ============================================================
+function cpdf(s){
+  s=String(s||"");
+  try{s=s.replace(/\p{Emoji}/gu,"");}catch(e){s=s.replace(/[^\x00-\xFF]/g,"");}
+  return s.replace(/[^\x20-\x7E\xA0-\xFF]/g,"").replace(/\s{2,}/g," ").trim();
+}
+
+function fmtDate(iso){
+  if(!iso) return "--";
+  var parts=iso.split("-");
+  if(parts.length===3) return parts[2]+"/"+parts[1]+"/"+parts[0];
+  return iso;
+}
+
+function buildPDFDoc(){
+  var doc=new window.jspdf.jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
+  var pW=210,pH=297,mg=12,y=mg;
+  var C={navy:[15,31,61],blue:[26,58,107],accent:[45,108,223],silver:[200,216,240],light:[238,243,252],lighter:[246,249,255],white:[255,255,255],ink:[15,31,61],muted:[107,127,168],border:[208,220,240]};
+  function fr(x,fy,w,h,c){doc.setFillColor(c[0],c[1],c[2]);doc.rect(x,fy,w,h,"F");}
+  function sf(sz,st,c){doc.setFontSize(sz);doc.setFont("helvetica",st||"normal");doc.setTextColor(c[0],c[1],c[2]);}
+  function ln(c){doc.setDrawColor(c[0],c[1],c[2]);}
+  function pc(n){if(y+(n||18)>pH-mg){doc.addPage();y=mg;}}
+  function shd(t){pc(12);fr(mg,y,pW-mg*2,7,C.blue);sf(8,"bold",C.white);doc.text(t,mg+4,y+4.8);y+=9;}
+
+  // Header banner
+  fr(0,0,pW,20,C.navy);
+  sf(12,"bold",C.white);doc.text("ALUMINUM & GLASS - SITE INSTALLATION REPORT",pW/2,9,{align:"center"});
+  sf(7.5,"normal",C.silver);doc.text("Al-Glass Installation Management | Confidential Site Document",pW/2,14.5,{align:"center"});
+  fr(0,20,pW,2,C.accent);y=26;
+
+  // Report ID strip
+  fr(mg,y,pW-mg*2,7,C.light);
+  sf(7,"bold",C.muted);
+  doc.text("Report ID: "+gId,mg+3,y+4.5);
+  doc.text("Date: "+fmtDate(document.getElementById("fDate").value),pW/2,y+4.5,{align:"center"});
+  sf(7,"normal",C.muted);
+  doc.text("Report No: "+cpdf(document.getElementById("fReportNo").value),pW-mg-3,y+4.5,{align:"right"});
+  y+=10;
+
+  // Project information
+  shd("PROJECT INFORMATION");
+  var flds=[
+    ["Project Name",cpdf(document.getElementById("fProjectName").value)],
+    ["Location",cpdf(document.getElementById("fLocation").value)],
+    ["Contractor",cpdf(document.getElementById("fContractor").value)],
+    ["Report No.",cpdf(document.getElementById("fReportNo").value)],
+    ["Date",fmtDate(document.getElementById("fDate").value)],
+    ["Prepared By",cpdf(document.getElementById("fPreparedBy").value)],
+    ["Weather",cpdf(document.getElementById("fWeather").value)]
+  ];
+  var cW=(pW-mg*2-4)/2;
+  flds.forEach(function(p,i){
+    var fx=mg+(i%2)*(cW+4),fy=y+Math.floor(i/2)*9;
+    // Last field (index 6) spans full width if odd count
+    var fw=(i===flds.length-1&&flds.length%2===1)?pW-mg*2:cW;
+    if(i===flds.length-1&&flds.length%2===1){fx=mg;fw=pW-mg*2;}
+    fr(fx,fy,38,8,[214,228,240]);fr(fx+38,fy,fw-38,8,[246,249,255]);
+    ln(C.border);doc.setLineWidth(0.3);doc.rect(fx,fy,fw,8);
+    sf(7,"bold",C.muted);doc.text(p[0],fx+2,fy+5.2);
+    sf(8,"normal",C.ink);doc.text(p[1].substring(0,55),fx+40,fy+5.2);
+  });
+  y+=Math.ceil(flds.length/2)*9+4;
+
+  // Manpower
+  pc(30);shd("MANPOWER ON SITE");
+  var mH=["#","Trade / Role","Name","Workers","Arrival","Departure","Status"];
+  var mW=[8,30,34,13,15,15,21];
+  var mT=mW.reduce(function(a,b){return a+b;},0),mSc=(pW-mg*2)/mT;
+  fr(mg,y,pW-mg*2,6.5,C.navy);
+  var cx=mg;
+  mH.forEach(function(h,i){sf(6.5,"bold",C.white);doc.text(h,cx+1,y+4.5);cx+=mW[i]*mSc;});
+  y+=6.5;
+  var mpHasData=false;
+  mpRows.forEach(function(r,ri){
+    if(!r.trade&&!r.name)return;mpHasData=true;pc(7);
+    fr(mg,y,pW-mg*2,6.5,ri%2===0?C.light:C.white);
+    ln(C.border);doc.setLineWidth(0.2);doc.rect(mg,y,pW-mg*2,6.5);
+    cx=mg;
+    [String(ri+1),cpdf(r.trade),cpdf(r.name),String(r.count||1),r.arrival||"",r.departure||"",cpdf(r.status)].forEach(function(v,i){
+      sf(7.5,"normal",C.ink);doc.text(v.substring(0,16),cx+1.5,y+4.5);cx+=mW[i]*mSc;
+    });
+    y+=6.5;
+  });
+  if(!mpHasData){sf(8,"normal",C.muted);doc.text("No manpower recorded.",mg+4,y+4.5);y+=6.5;}
+  y+=4;
+
+  // Installation scope
+  pc(30);shd("INSTALLATION SCOPE");
+  var sH=["#","Floor","Win/Door","Description","Frame","Glass","Silicone","Hardware","Qty","Unit","Remarks"];
+  var sW=[7,11,14,28,13,13,13,13,8,10,22];
+  var sT=sW.reduce(function(a,b){return a+b;},0),sSc=(pW-mg*2)/sT;
+  fr(mg,y,pW-mg*2,7,C.navy);
+  cx=mg;sH.forEach(function(h,i){sf(6,"bold",C.white);doc.text(h,cx+0.8,y+5);cx+=sW[i]*sSc;});
+  y+=7;
+  var scHasData=false;
+  scRows.forEach(function(r,ri){
+    if(!r.floor&&!r.winNo&&!r.desc)return;scHasData=true;pc(7);
+    fr(mg,y,pW-mg*2,7,ri%2===0?C.light:C.white);
+    ln(C.border);doc.setLineWidth(0.2);doc.rect(mg,y,pW-mg*2,7);
+    cx=mg;
+    [String(ri+1),cpdf(r.floor),cpdf(r.winNo),cpdf(r.desc),r.frame,r.glass,r.silicone,r.hardware,String(r.qty||""),cpdf(r.unit),cpdf(r.remarks)].forEach(function(v,i){
+      sf(7.5,"normal",C.ink);doc.text(v.substring(0,[2,5,7,14,5,5,5,5,4,4,12][i]),cx+0.8,y+5);cx+=sW[i]*sSc;
+    });
+    y+=7;
+  });
+  if(!scHasData){sf(8,"normal",C.muted);doc.text("No scope items recorded.",mg+4,y+4.5);y+=7;}
+  y+=4;
+
+  // Issues
+  var actIss=isRows.filter(function(r){return r.desc;});
+  if(actIss.length){
+    pc(20);shd("ISSUES / OBSERVATIONS");
+    actIss.forEach(function(r,i){
+      pc(8);fr(mg,y,pW-mg*2,7.5,i%2===0?C.light:C.white);
+      ln(C.border);doc.rect(mg,y,pW-mg*2,7.5);
+      sf(7,"bold",[200,100,20]);doc.text("["+cpdf(r.type)+"]",mg+2,y+5);
+      sf(7.5,"normal",C.ink);doc.text(cpdf(r.desc).substring(0,100),mg+22,y+5);
+      y+=7.5;
+    });
+    y+=4;
+  }
+
+  // Signatures
+  pc(42);shd("AUTHORIZATION & SIGNATURES");
+  var sR=["Site Engineer","QS Officer","Project Manager"];
+  var sN=[cpdf(document.getElementById("sn1").value),cpdf(document.getElementById("sn2").value),cpdf(document.getElementById("sn3").value)];
+  var sCW=(pW-mg*2-8)/3;
+  sR.forEach(function(role,i){
+    var sx=mg+i*(sCW+4);
+    fr(sx,y,sCW,30,[250,252,255]);ln(C.border);doc.setLineWidth(0.4);doc.rect(sx,y,sCW,30);
+    if(sigHas[i+1]){try{doc.addImage(document.getElementById("sc"+(i+1)).toDataURL("image/png"),"PNG",sx+2,y+1,sCW-4,22);}catch(e){}}
+    fr(sx,y+22,sCW,8,C.light);
+    sf(7.5,"bold",C.muted);doc.text(role,sx+sCW/2,y+26,{align:"center"});
+    if(sN[i]){sf(8,"normal",C.ink);doc.text(sN[i],sx+sCW/2,y+28.5,{align:"center"});}
+  });
+  y+=34;
+
+  // Photos page
+  var wph=phSlots.filter(function(s){return s.preview&&s.preview.indexOf("data:")===0;});
+  if(wph.length){
+    doc.addPage();
+    fr(0,0,pW,20,C.navy);sf(12,"bold",C.white);doc.text("SITE PHOTO REPORT",pW/2,12,{align:"center"});
+    fr(0,20,pW,2,C.accent);y=28;
+    var phW=(pW-mg*2-6)/2,phH=phW*0.65,col=0;
+    wph.forEach(function(s,pi){
+      if(col===0&&pi>0){y+=phH+18;pc(phH+22);}
+      var px=mg+col*(phW+6);
+      try{doc.addImage(s.preview,"JPEG",px,y,phW,phH);ln(C.border);doc.rect(px,y,phW,phH);}catch(er){}
+      fr(px,y+phH,phW,7,C.light);
+      sf(7,"bold",C.muted);doc.text("Floor: "+(s.floor||"--")+"   Win/Door: "+(s.winNo||"--"),px+2,y+phH+4.5);
+      if(s.caption){fr(px,y+phH+7,phW,6.5,C.white);ln(C.border);doc.rect(px,y+phH+7,phW,6.5);sf(7.5,"normal",C.ink);doc.text(cpdf(s.caption).substring(0,37),px+2,y+phH+11.5);}
+      col++;if(col>=2)col=0;
+    });
+  }
+
+  // Footer on all pages
+  var tot=doc.internal.getNumberOfPages();
+  for(var p=1;p<=tot;p++){
+    doc.setPage(p);fr(0,pH-10,pW,10,C.navy);
+    sf(6.5,"normal",C.silver);
+    doc.text("Controlled document. Amendments require Project Manager authorization.",pW/2,pH-4.5,{align:"center"});
+    doc.text("Page "+p+" of "+tot,pW-mg,pH-4.5,{align:"right"});
+  }
+  return doc;
+}
+
+// ============================================================
+// SAVE PDF TO DRIVE + DOWNLOAD
+// ============================================================
+async function savePDFtoDrive(){
+  showLoader("Generating PDF...");
+  var projName=cpdf(document.getElementById("fProjectName").value)||"SiteReport";
+  var dateStr=document.getElementById("fDate").value||new Date().toISOString().split("T")[0];
+  var filename=projName.replace(/\s+/g,"_")+"_"+dateStr+"_"+gId+".pdf";
+
+  try{
+    // Step 1: Build PDF
+    var doc=buildPDFDoc();
+    var pdfBase64=doc.output("datauristring").split(",")[1];
+
+    // Step 2: Download locally always
+    doc.save(filename);
+
+    // Step 3: Upload to Drive if configured
+    if(gCfg.url&&gCfg.folderId){
+      showLoader("Saving PDF to Google Drive...");
+      try{
+        await nocorsPost(gCfg.url,{action:"savePDF",base64:pdfBase64,filename:filename,folderId:gCfg.folderId,reportId:gId,projectName:cpdf(document.getElementById("fProjectName").value),date:dateStr,preparedBy:cpdf(document.getElementById("fPreparedBy").value)});
+        showBanner("report","PDF downloaded and saved to Google Drive!","s");
+        // Send Telegram notification
+        var proj=cpdf(document.getElementById("fProjectName").value)||"Unknown Project";
+        var prep=cpdf(document.getElementById("fPreparedBy").value)||"Unknown";
+        var dt=fmtDate(document.getElementById("fDate").value);
+        var mpCount=mpRows.filter(function(r){return r.trade||r.name;}).length;
+        var scCount=scRows.filter(function(r){return r.floor||r.winNo||r.desc;}).length;
+        var msg="<b>New Site Report Submitted</b>\n\n"+
+          "<b>Project:</b> "+proj+"\n"+
+          "<b>Date:</b> "+dt+"\n"+
+          "<b>Prepared By:</b> "+prep+"\n"+
+          "<b>Report No:</b> "+cpdf(document.getElementById("fReportNo").value)+"\n"+
+          "<b>Manpower:</b> "+mpCount+" entr"+(mpCount===1?"y":"ies")+"\n"+
+          "<b>Scope Items:</b> "+scCount+"\n"+
+          "<b>File:</b> "+filename;
+        sendTelegram(msg);
+      }catch(uploadErr){
+        showBanner("report","PDF downloaded. Drive upload failed: "+uploadErr.message,"w");
+      }
+    } else {
+      showBanner("report","PDF downloaded! Configure Google Drive in Setup to also save there.","i");
+    }
+  }catch(e){
+    showBanner("report","PDF error: "+e.message,"e");
+    console.error(e);
+  }
+  hideLoader();
+}
+
+// ============================================================
+// HISTORY -- lists PDFs from Drive folder
+// ============================================================
+async function loadHistory(){
+  if(!gCfg.url){
+    document.getElementById("histBody").innerHTML="<tr><td colspan=\"5\" style=\"padding:36px;text-align:center;color:var(--muted)\">Configure Google Drive in the Setup tab first.</td></tr>";
+    return;
+  }
+  document.getElementById("histBody").innerHTML="<tr><td colspan=\"5\" style=\"padding:36px;text-align:center;color:var(--muted)\"><div class=\"spinner\" style=\"margin:0 auto 10px\"></div>Loading...</td></tr>";
+  try{
+    var data=await jsonpGet(gCfg.url+"?action=listPDFs&folderId="+encodeURIComponent(gCfg.folderId),12000);
+    if(data.files&&data.files.length>0){
+      allFiles=data.files;
+      updateBadge(allFiles.length);
+      buildHistStats(allFiles);
+      filtFiles=allFiles.slice();
+      renderHist(filtFiles);
+    }else{
+      document.getElementById("histBody").innerHTML="<tr><td colspan=\"5\" style=\"padding:36px;text-align:center;color:var(--muted)\">No PDF reports saved yet.</td></tr>";
+      document.getElementById("histCount").textContent="0";
+      updateBadge(0);
+    }
+  }catch(e){
+    document.getElementById("histBody").innerHTML="<tr><td colspan=\"5\" style=\"padding:36px;text-align:center;color:var(--danger)\">Failed: "+e.message+"</td></tr>";
+  }
+}
+
+function updateBadge(n){
+  ["histBadge","topBadge"].forEach(function(id){var el=document.getElementById(id);el.textContent=n;el.style.display=n>0?"inline":"none";});
+}
+
+function buildHistStats(files){
+  var thisM=new Date().toISOString().substring(0,7),mc=0,totalBytes=0;
+  files.forEach(function(f){
+    if(f.createdTime&&f.createdTime.startsWith(thisM))mc++;
+    if(f.size)totalBytes+=parseInt(f.size)||0;
+  });
+  document.getElementById("statTotal").textContent=files.length;
+  document.getElementById("statMonth").textContent=mc;
+  document.getElementById("statSize").textContent=totalBytes>0?fmtSize(totalBytes):"--";
+}
+
+function fmtSize(bytes){
+  if(bytes>1048576)return (bytes/1048576).toFixed(1)+" MB";
+  if(bytes>1024)return (bytes/1024).toFixed(0)+" KB";
+  return bytes+" B";
+}
+
+function filterHistory(){
+  var q=(document.getElementById("histSearch").value||"").toLowerCase();
+  var m=document.getElementById("histMonth").value;
+  filtFiles=allFiles.filter(function(f){
+    var mq=!q||(f.name||"").toLowerCase().indexOf(q)>=0;
+    var mm=!m||!f.createdTime||f.createdTime.startsWith(m);
+    return mq&&mm;
+  });
+  renderHist(filtFiles);
+}
+
+function renderHist(files){
+  document.getElementById("histCount").textContent=files.length;
+  if(!files.length){document.getElementById("histBody").innerHTML="<tr><td colspan=\"5\" style=\"padding:34px;text-align:center;color:var(--muted)\">No records match.</td></tr>";return;}
+  var html="";
+  files.forEach(function(f){
+    var dt="--";
+    try{if(f.createdTime)dt=new Date(f.createdTime).toLocaleString("en-GB",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});}catch(e){}
+    var sz=f.size?fmtSize(parseInt(f.size)||0):"--";
+    var viewUrl=f.webViewLink||("https://drive.google.com/file/d/"+f.id+"/view");
+    html+="<tr class=\"hist-row\" onclick=\"window.open('"+viewUrl+"','_blank')\">"+
+      "<td><div class=\"pdf-icon\">PDF</div></td>"+
+      "<td style=\"font-weight:500;color:var(--navy)\">"+esc(f.name||"--")+"</td>"+
+      "<td style=\"font-size:11.5px;color:var(--muted);white-space:nowrap\">"+dt+"</td>"+
+      "<td style=\"font-size:11.5px;color:var(--muted)\">"+sz+"</td>"+
+      "<td style=\"text-align:center\">"+
+        "<a href=\""+viewUrl+"\" target=\"_blank\" class=\"btn btn-primary btn-xs\" onclick=\"event.stopPropagation()\">Open PDF</a>"+
+      "</td>"+
+      "</tr>";
+  });
+  document.getElementById("histBody").innerHTML=html;
+}
+
+// ============================================================
+// APPS SCRIPT CODE (displayed as text, not eval'd)
+// ============================================================
+function populateScriptBox(){
+  var lines=[
+    "// Al-Glass Site Report -- Google Apps Script",
+    "// Saves PDF reports to Drive + lists them for History",
+    "const FOLDER_ID = 'YOUR_FOLDER_ID';",
+    "",
+    "function doPost(e) {",
+    "  try {",
+    "    const d = JSON.parse(e.postData.contents);",
+    "    if (d.action === 'savePDF') return savePDF(d);",
+    "    return resp({error: 'Unknown action'});",
+    "  } catch(err) { return resp({error: err.message}); }",
+    "}",
+    "",
+    "function doGet(e) {",
+    "  const action = e.parameter.action;",
+    "  const cb     = e.parameter.callback || '';",
+    "  let result;",
+    "  if      (action === 'ping')     result = resp({status:'ok'});",
+    "  else if (action === 'listPDFs') result = listPDFs(e.parameter.folderId||FOLDER_ID);",
+    "  else result = resp({error:'Unknown'});",
+    "  if (cb) return ContentService",
+    "    .createTextOutput(cb+'('+result.getContent()+')')",
+    "    .setMimeType(ContentService.MimeType.JAVASCRIPT);",
+    "  return result;",
+    "}",
+    "",
+    "function savePDF(d) {",
+    "  const folderId = d.folderId || FOLDER_ID;",
+    "  const folder   = DriveApp.getFolderById(folderId);",
+    "  const bytes    = Utilities.base64Decode(d.base64);",
+    "  const blob     = Utilities.newBlob(bytes, 'application/pdf', d.filename);",
+    "  const file     = folder.createFile(blob);",
+    "  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);",
+    "  return resp({",
+    "    status:  'saved',",
+    "    fileId:  file.getId(),",
+    "    viewUrl: 'https://drive.google.com/file/d/'+file.getId()+'/view'",
+    "  });",
+    "}",
+    "",
+    "function listPDFs(folderId) {",
+    "  try {",
+    "    const folder = DriveApp.getFolderById(folderId||FOLDER_ID);",
+    "    const iter   = folder.getFilesByType('application/pdf');",
+    "    const files  = [];",
+    "    while (iter.hasNext()) {",
+    "      const f = iter.next();",
+    "      files.push({",
+    "        id:          f.getId(),",
+    "        name:        f.getName(),",
+    "        createdTime: f.getDateCreated().toISOString(),",
+    "        size:        String(f.getSize()),",
+    "        webViewLink: 'https://drive.google.com/file/d/'+f.getId()+'/view'",
+    "      });",
+    "    }",
+    "    // Sort newest first",
+    "    files.sort(function(a,b){return b.createdTime.localeCompare(a.createdTime);});",
+    "    return resp({files: files});",
+    "  } catch(e) {",
+    "    return resp({error: e.message, files: []});",
+    "  }",
+    "}",
+    "",
+    "function resp(d) {",
+    "  return ContentService.createTextOutput(JSON.stringify(d))",
+    "    .setMimeType(ContentService.MimeType.JSON);",
+    "}"
+  ];
+  document.getElementById("scriptBox").textContent=lines.join("\n");
+}
+
+function copyScript(){
+  var code=document.getElementById("scriptBox").textContent;
+  navigator.clipboard.writeText(code).then(function(){
+    var b=document.getElementById("btnCopyScript");
+    b.textContent="Copied!";setTimeout(function(){b.textContent="Copy";},2000);
+  });
+}
+
+</script>
+</body>
+</html>
