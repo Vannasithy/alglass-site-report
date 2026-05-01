@@ -325,8 +325,8 @@ input[type=file]{display:none}
   <div class="sg">
     <div class="fg s2"><label>Apps Script Web App URL</label><input type="url" class="fc" id="cfgUrl" placeholder="https://script.google.com/macros/s/.../exec" value="https://script.google.com/macros/s/AKfycby8Y8_tsoUtOp0Zq5eJ6Awy2ySTLI5du0TTnYJcadGM8F9O_zgJTs_m9X8TvO1Q-dmU/exec"></div>
     <div class="fg"><label>Drive Folder ID (for PDF reports)</label><input type="text" class="fc" id="cfgFolderId" placeholder="1a2B3cD4eF5gH6iJ7k..." value="1kh1SWOWaEbxnrOB5WFoaUIXjA5ZEqvzC"></div>
-    <div class="fg"><label>Telegram Bot Token</label><input type="text" class="fc" id="cfgTgToken" placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"></div>
-    <div class="fg"><label>Telegram Chat ID</label><input type="text" class="fc" id="cfgTgChatId" placeholder="-1001234567890 or your user ID"></div>
+    <div class="fg"><label>Telegram Bot Token</label><input type="text" class="fc" id="cfgTgToken" placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11" value="8709577985:AAGCPqVTRxCYLSXbKSo75gqT9w8zD_BvF8A"></div>
+    <div class="fg"><label>Telegram Chat ID</label><input type="text" class="fc" id="cfgTgChatId" placeholder="-1001234567890 or your user ID" value="-5228868854"></div>
     <div class="fg s2" style="flex-direction:row;align-items:center;gap:8px;margin-top:2px">
       <button class="btn btn-primary" id="btnSaveCfg">Save All</button>
       <button class="btn btn-outline" id="btnTestConn">Test Connection</button>
@@ -371,7 +371,7 @@ input[type=file]{display:none}
 // STATE
 // ============================================================
 var gId="",mpRows=[],scRows=[],isRows=[],phSlots=[],phIdx=null;
-var gCfg={url:"https://script.google.com/macros/s/AKfycby8Y8_tsoUtOp0Zq5eJ6Awy2ySTLI5du0TTnYJcadGM8F9O_zgJTs_m9X8TvO1Q-dmU/exec",folderId:"1kh1SWOWaEbxnrOB5WFoaUIXjA5ZEqvzC",tgToken:"",tgChatId:""};
+var gCfg={url:"https://script.google.com/macros/s/AKfycby8Y8_tsoUtOp0Zq5eJ6Awy2ySTLI5du0TTnYJcadGM8F9O_zgJTs_m9X8TvO1Q-dmU/exec",folderId:"1kh1SWOWaEbxnrOB5WFoaUIXjA5ZEqvzC",tgToken:"8709577985:AAGCPqVTRxCYLSXbKSo75gqT9w8zD_BvF8A",tgChatId:"-5228868854"};
 var sigHas={1:false,2:false,3:false},drawing=false,drawSig=0;
 var allFiles=[],filtFiles=[],modalCb=null,bTimers={};
 
