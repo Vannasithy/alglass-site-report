@@ -323,7 +323,7 @@ input[type=file]{display:none}
   <p>Connect to Google Drive so PDF reports are automatically saved when you click "Save PDF to Drive". The History tab will show all saved PDFs.<br>
   <strong style="color:var(--navy)">Before testing:</strong> Make sure your Apps Script is deployed with <strong>Execute as: Me</strong> and <strong>Who has access: Anyone</strong>, and that you created a <strong>New Version</strong> after pasting the script.</p>
   <div class="sg">
-    <div class="fg s2"><label>Apps Script Web App URL</label><input type="url" class="fc" id="cfgUrl" placeholder="https://script.google.com/macros/s/.../exec" value="https://script.google.com/macros/s/AKfycby8Y8_tsoUtOp0Zq5eJ6Awy2ySTLI5du0TTnYJcadGM8F9O_zgJTs_m9X8TvO1Q-dmU/exec"></div>
+    <div class="fg s2"><label>Apps Script Web App URL</label><input type="url" class="fc" id="cfgUrl" placeholder="https://script.google.com/macros/s/.../exec" value="https://script.google.com/macros/s/AKfycbycHL7AirXzjXhckVVKIqV_y0PnFfJ8jJEWqaLdVcWpEjsJNp43nH0LwZTzp5Mm50db/exec"></div>
     <div class="fg"><label>Drive Folder ID (for PDF reports)</label><input type="text" class="fc" id="cfgFolderId" placeholder="1a2B3cD4eF5gH6iJ7k..." value="1kh1SWOWaEbxnrOB5WFoaUIXjA5ZEqvzC"></div>
     <div class="fg"><label>Telegram Bot Token</label><input type="text" class="fc" id="cfgTgToken" placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11" value="8709577985:AAGCPqVTRxCYLSXbKSo75gqT9w8zD_BvF8A"></div>
     <div class="fg"><label>Telegram Chat ID</label><input type="text" class="fc" id="cfgTgChatId" placeholder="-1001234567890 or your user ID" value="-5228868854"></div>
@@ -668,7 +668,7 @@ async function testConn(){
   }
   showLoader("Testing connection...");
 
-  // Strategy 1: JSONP (best — gets response back)
+  // Strategy 1: JSONP (best -- gets response back)
   var jsonpOk=false;
   try{
     var d=await jsonpGet(gCfg.url+"?action=ping",7000);
@@ -681,7 +681,7 @@ async function testConn(){
     hideLoader();return;
   }catch(jsonpErr){}
 
-  // Strategy 2: no-cors POST ping (fire and forget — if no network error, script is reachable)
+  // Strategy 2: no-cors POST ping (fire and forget -- if no network error, script is reachable)
   try{
     await nocorsPost(gCfg.url,{action:"ping"});
     // If we get here without error, the URL is reachable
@@ -694,10 +694,10 @@ async function testConn(){
       }
     }catch(e2){}
     // URL reachable via POST but JSONP still failing
-    // This usually means the script does not return JSONP — needs redeployment
+    // This usually means the script does not return JSONP -- needs redeployment
     showBanner("setup","Script URL is reachable but History (JSONP) will not work. Redeploy the script: Apps Script > Deploy > Manage Deployments > Edit > New Version. The Save PDF button will still work normally.","w");
   }catch(postErr){
-    // Both methods failed — likely URL issue
+    // Both methods failed -- likely URL issue
     showBanner("setup","Cannot reach script. Steps to fix: 1) Open Apps Script, 2) Deploy > Manage Deployments > Edit, 3) Change version to New Version, 4) Set Access to Anyone, 5) Click Deploy, 6) Copy the new URL here.","e");
   }
   hideLoader();
@@ -902,6 +902,67 @@ function buildPDFDoc(){
 // ============================================================
 // SAVE PDF TO DRIVE + DOWNLOAD
 // ============================================================
+// iframe form POST -- works for large payloads, returns response via JSONP callback
+function iframePost(url, payload, timeoutMs){
+  timeoutMs=timeoutMs||90000; // 90s for large PDFs
+  return new Promise(function(resolve,reject){
+    var cb="cb"+Date.now()+Math.floor(Math.random()*99999);
+    var ifrId="ifr_"+cb, frmId="frm_"+cb;
+    var done=false;
+
+    var timer=setTimeout(function(){
+      if(done)return; done=true; cleanup();
+      reject(new Error("Upload timed out after 90s. Check your internet connection."));
+    },timeoutMs);
+
+    window[cb]=function(data){
+      if(done)return; done=true; cleanup(); resolve(data);
+    };
+
+    function cleanup(){
+      clearTimeout(timer); delete window[cb];
+      var ifr=document.getElementById(ifrId);
+      var frm=document.getElementById(frmId);
+      if(ifr)ifr.parentNode.removeChild(ifr);
+      if(frm)frm.parentNode.removeChild(frm);
+    }
+
+    // Hidden iframe as form target
+    var ifr=document.createElement("iframe");
+    ifr.id=ifrId; ifr.name=ifrId; ifr.style.display="none";
+    document.body.appendChild(ifr);
+
+    // Form that POSTs to Apps Script
+    var frm=document.createElement("form");
+    frm.id=frmId; frm.method="POST";
+    frm.action=url; frm.target=ifrId;
+    frm.style.display="none";
+
+    // Add callback so Apps Script wraps response in JSONP
+    payload.callback=cb;
+
+    Object.keys(payload).forEach(function(k){
+      var inp=document.createElement("input");
+      inp.type="hidden"; inp.name=k;
+      inp.value=typeof payload[k]==="object"?JSON.stringify(payload[k]):String(payload[k]);
+      frm.appendChild(inp);
+    });
+
+    document.body.appendChild(frm);
+
+    // Listen for iframe load to detect errors
+    ifr.onload=function(){
+      // iframe loaded -- JSONP callback should fire shortly
+      // If callback hasn't fired after 5s post-load, assume success (no response)
+      setTimeout(function(){
+        if(!done){done=true;cleanup();resolve({status:"sent"});}
+      },5000);
+    };
+
+    frm.submit();
+  });
+}
+
 async function savePDFtoDrive(){
   showLoader("Generating PDF...");
   var projName=cpdf(document.getElementById("fProjectName").value)||"SiteReport";
@@ -920,8 +981,22 @@ async function savePDFtoDrive(){
     if(gCfg.url&&gCfg.folderId){
       showLoader("Saving PDF to Google Drive...");
       try{
-        await nocorsPost(gCfg.url,{action:"savePDF",base64:pdfBase64,filename:filename,folderId:gCfg.folderId,reportId:gId,projectName:cpdf(document.getElementById("fProjectName").value),date:dateStr,preparedBy:cpdf(document.getElementById("fPreparedBy").value)});
-        showBanner("report","PDF downloaded and saved to Google Drive!","s");
+        // Use iframe form POST -- handles large payloads and returns response via JSONP
+        var result=await iframePost(gCfg.url,{
+          action:"savePDF",
+          base64:pdfBase64,
+          filename:filename,
+          folderId:gCfg.folderId,
+          reportId:gId,
+          projectName:cpdf(document.getElementById("fProjectName").value),
+          date:dateStr,
+          preparedBy:cpdf(document.getElementById("fPreparedBy").value)
+        });
+        if(result&&result.status==="saved"){
+          showBanner("report","PDF saved to Google Drive successfully!","s");
+        } else {
+          showBanner("report","PDF sent to Google Drive. Check your Drive folder.","s");
+        }
         // Send Telegram notification
         var proj=cpdf(document.getElementById("fProjectName").value)||"Unknown Project";
         var prep=cpdf(document.getElementById("fPreparedBy").value)||"Unknown";
@@ -938,7 +1013,14 @@ async function savePDFtoDrive(){
           "<b>File:</b> "+filename;
         sendTelegram(msg);
       }catch(uploadErr){
-        showBanner("report","PDF downloaded. Drive upload failed: "+uploadErr.message,"w");
+        // Last resort: try no-cors POST (fire and forget)
+        try{
+          await nocorsPost(gCfg.url,{action:"savePDF",base64:pdfBase64,filename:filename,folderId:gCfg.folderId});
+          showBanner("report","PDF sent to Drive (check your folder to confirm).","s");
+          sendTelegram("<b>Site Report PDF sent</b>\n<b>File:</b> "+filename);
+        }catch(e2){
+          showBanner("report","PDF downloaded but Drive upload failed. Check your internet connection and Apps Script deployment.","w");
+        }
       }
     } else {
       showBanner("report","PDF downloaded! Configure Google Drive in Setup to also save there.","i");
@@ -1042,9 +1124,19 @@ function populateScriptBox(){
     "",
     "function doPost(e) {",
     "  try {",
-    "    const d = JSON.parse(e.postData.contents);",
-    "    if (d.action === 'savePDF') return savePDF(d);",
-    "    return resp({error: 'Unknown action'});",
+    "    let d, cb = '';",
+    "    if (e.postData && e.postData.type === 'application/x-www-form-urlencoded') {",
+    "      d = e.parameter; cb = e.parameter.callback || '';",
+    "    } else {",
+    "      d = JSON.parse(e.postData.contents);",
+    "    }",
+    "    let result;",
+    "    if (d.action === 'savePDF') result = savePDF(d);",
+    "    else result = resp({error: 'Unknown action'});",
+    "    if (cb) return ContentService",
+    "      .createTextOutput(cb + '(' + result.getContent() + ')')",
+    "      .setMimeType(ContentService.MimeType.JAVASCRIPT);",
+    "    return result;",
     "  } catch(err) { return resp({error: err.message}); }",
     "}",
     "",
