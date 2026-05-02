@@ -667,25 +667,38 @@ async function testConn(){
     return;
   }
   showLoader("Testing connection...");
-  // Try JSONP first
+
+  // Strategy 1: JSONP (best — gets response back)
+  var jsonpOk=false;
   try{
-    var d=await jsonpGet(gCfg.url+"?action=ping",6000);
-    if(d.status==="ok"){showBanner("setup","Connection successful! Drive integration is ready.","s");hideLoader();return;}
-    showBanner("setup","Unexpected response: "+JSON.stringify(d),"w");hideLoader();return;
-  }catch(jsonpErr){}
-  // Fallback: plain fetch for diagnosis
-  try{
-    var res=await fetch(gCfg.url+"?action=ping",{method:"GET"});
-    var text=await res.text();
-    if(text.indexOf("ok")>=0){
-      showBanner("setup","Script reachable but JSONP not working. Redeploy with a NEW VERSION after pasting the script.","w");
-    }else if(res.status===200){
-      showBanner("setup","Script reached but response is wrong. Check the script code matches the Setup tab.","w");
-    }else{
-      showBanner("setup","HTTP "+res.status+" -- check Deploy settings: Execute as Me, Access Anyone.","e");
+    var d=await jsonpGet(gCfg.url+"?action=ping",7000);
+    if(d&&d.status==="ok"){
+      showBanner("setup","Connection successful! Drive integration is ready.","s");
+      hideLoader();return;
     }
-  }catch(fetchErr){
-    showBanner("setup","Cannot reach script. Check: (1) URL is correct Web App URL, (2) Access = Anyone, (3) You deployed a New Version after pasting the code, (4) Execute as = Me.","e");
+    jsonpOk=true; // got a response, just not {status:ok}
+    showBanner("setup","Script responded but returned unexpected data. Make sure the script code from the Setup tab is deployed.","w");
+    hideLoader();return;
+  }catch(jsonpErr){}
+
+  // Strategy 2: no-cors POST ping (fire and forget — if no network error, script is reachable)
+  try{
+    await nocorsPost(gCfg.url,{action:"ping"});
+    // If we get here without error, the URL is reachable
+    // Now try JSONP one more time with longer timeout
+    try{
+      var d2=await jsonpGet(gCfg.url+"?action=ping",10000);
+      if(d2&&d2.status==="ok"){
+        showBanner("setup","Connection successful! Drive integration is ready.","s");
+        hideLoader();return;
+      }
+    }catch(e2){}
+    // URL reachable via POST but JSONP still failing
+    // This usually means the script does not return JSONP — needs redeployment
+    showBanner("setup","Script URL is reachable but History (JSONP) will not work. Redeploy the script: Apps Script > Deploy > Manage Deployments > Edit > New Version. The Save PDF button will still work normally.","w");
+  }catch(postErr){
+    // Both methods failed — likely URL issue
+    showBanner("setup","Cannot reach script. Steps to fix: 1) Open Apps Script, 2) Deploy > Manage Deployments > Edit, 3) Change version to New Version, 4) Set Access to Anyone, 5) Click Deploy, 6) Copy the new URL here.","e");
   }
   hideLoader();
 }
